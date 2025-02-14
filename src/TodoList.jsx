@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import TodoTable from './TodoTable'; // Import the TodoTable component
 
-const TodoList = () => {
+const Todolist = () => {
+    // State for storing the list of todo items and the current todo being entered
     const [todos, setTodos] = useState([]);
     const [todo, setTodo] = useState({ description: '', date: '' });
 
-    // Handle changes in the input fields
+    // Handle input field changes for both description and date
     const handleChange = (e) => {
         const { name, value } = e.target;
         setTodo((prevTodo) => ({
@@ -13,17 +15,20 @@ const TodoList = () => {
         }));
     };
 
-    // Add a new task to the list
+    // Add a new todo item to the list
     const addTodo = () => {
+        // Ensure both the description and date fields are filled in
         if (todo.description.trim() === '' || todo.date.trim() === '') {
-            alert('Fill both fields!');
+            alert('Please fill in both fields!');
             return;
         }
+        // Add the new todo item at the beginning of the todos array
         setTodos([todo, ...todos]);
+        // Reset the input fields
         setTodo({ description: '', date: '' });
     };
 
-    // Remove a task from the list
+    // Delete a todo item based on its index
     const deleteTodo = (indexToDelete) => {
         setTodos(todos.filter((_, index) => index !== indexToDelete));
     };
@@ -32,31 +37,28 @@ const TodoList = () => {
         <div>
             <h2>Add todo's here</h2>
             <div>
+                {/* Input for task description */}
                 <input
                     type="text"
                     name="description"
-                    placeholder="Description of the task"
+                    placeholder="Task description"
                     value={todo.description}
                     onChange={handleChange}
                 />
+                {/* Input for task date */}
                 <input
                     type="date"
                     name="date"
                     value={todo.date}
                     onChange={handleChange}
                 />
-                <button onClick={addTodo}>Add task</button>
+                {/* Button to add a new task */}
+                <button onClick={addTodo}>Add Task</button>
             </div>
-            <ul>
-                {todos.map((item, index) => (
-                    <li key={index}>
-                        {item.description} - {item.date}{' '}
-                        <button onClick={() => deleteTodo(index)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
+            {/* Render the TodoTable component, passing todos and the deleteTodo function as props */}
+            <TodoTable todos={todos} deleteTodo={deleteTodo} />
         </div>
     );
 };
 
-export default TodoList;
+export default Todolist;
