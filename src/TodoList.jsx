@@ -1,58 +1,32 @@
 import React, { useState } from 'react';
 import TodoTable from './TodoTable';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers';
+import TextField from '@mui/material/TextField';
 
-
-/**
- * Todolist
- * This component manages the todo state, input fields, and the add/delete functionality.
- * It renders the TodoTable component, passing the current list of todos and a delete function.
- */
 const Todolist = () => {
-
-    // State for storing the list of todo items
     const [todos, setTodos] = useState([]);
+    const [todo, setTodo] = useState({ description: '', date: null, priority: '' });
 
-    // State for the currently entered todo (description, date, and priority)
-    const [todo, setTodo] = useState({ description: '', date: '', priority: '' });
-
-    /**
-     * handleChange
-     * Updates the 'todo' state as the user types in the input fields.
-     */
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTodo((prevTodo) => ({
-            ...prevTodo,
-            [name]: value,
-        }));
+        setTodo((prev) => ({ ...prev, [name]: value }));
     };
 
-    /**
-     * addTodo
-     * Validates the input fields and adds a new todo item to the 'todos' array if valid.
-     */
+    const handleDateChange = (newDate) => {
+        setTodo((prev) => ({ ...prev, date: newDate }));
+    };
+
     const addTodo = () => {
-        // Ensure description, date, and priority are all provided
-        if (
-            todo.description.trim() === '' ||
-            todo.date.trim() === '' ||
-            todo.priority.trim() === ''
-        ) {
+        if (!todo.description.trim() || !todo.date || !todo.priority.trim()) {
             alert('Please fill in description, date, and priority!');
             return;
         }
-
-        // Add the new todo at the beginning of the todos array
         setTodos([todo, ...todos]);
-
-        // Reset the input fields
-        setTodo({ description: '', date: '', priority: '' });
+        setTodo({ description: '', date: null, priority: '' });
     };
 
-    /**
-     * deleteTodo
-     * Removes a todo item by filtering it out of the 'todos' array based on its index.
-     */
     const deleteTodo = (indexToDelete) => {
         setTodos(todos.filter((_, index) => index !== indexToDelete));
     };
@@ -60,37 +34,101 @@ const Todolist = () => {
     return (
         <div>
             <div>
-                {/* Input for task description */}
+                {/* Task description input */}
                 <input
                     type="text"
                     name="description"
                     placeholder="Task description"
                     value={todo.description}
                     onChange={handleChange}
+                    style={{
+                        backgroundColor: '#222',
+                        color: '#ccc',
+                        border: '1px solid #666',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        marginRight: '8px'
+                    }}
                 />
 
-                {/* Input for task date */}
-                <input
-                    type="date"
-                    name="date"
-                    value={todo.date}
-                    onChange={handleChange}
-                />
+                {/* MUI DatePicker with spacing on the right and bottom */}
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                        label="Select date"
+                        value={todo.date}
+                        onChange={handleDateChange}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                sx={{
+                                    // Add margin to the right (mr) and bottom (mb)
+                                    mr: 2,
+                                    mb: 2,
+                                    // Other styling overrides
+                                    '& .MuiOutlinedInput-root': {
+                                        backgroundColor: '#222',
+                                        borderRadius: '4px',
+                                        '& fieldset': {
+                                            borderColor: '#666',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#aaa',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#aaa',
+                                        },
+                                    },
+                                    '& .MuiOutlinedInput-input': {
+                                        color: '#ccc'
+                                    },
+                                    '& .MuiInputLabel-root': {
+                                        color: '#ccc'
+                                    },
+                                    '& .MuiInputLabel-root.Mui-focused': {
+                                        color: '#ccc'
+                                    },
+                                    '& .MuiSvgIcon-root': {
+                                        color: '#ccc'
+                                    }
+                                }}
+                            />
+                        )}
+                    />
+                </LocalizationProvider>
 
-                {/* Input for task priority */}
+                {/* Priority input */}
                 <input
                     type="text"
                     name="priority"
                     placeholder="Priority (e.g., High, Medium, Low)"
                     value={todo.priority}
                     onChange={handleChange}
+                    style={{
+                        backgroundColor: '#222',
+                        color: '#ccc',
+                        border: '1px solid #666',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        marginRight: '8px'
+                    }}
                 />
 
-                {/* Button to add a new task */}
-                <button onClick={addTodo}>Add</button>
+                {/* Add button */}
+                <button
+                    onClick={addTodo}
+                    style={{
+                        backgroundColor: '#444',
+                        color: '#fff',
+                        border: '1px solid #666',
+                        borderRadius: '4px',
+                        padding: '4px 8px'
+                    }}
+                >
+                    Add
+                </button>
             </div>
 
-            {/* Render the TodoTable component, passing todos and deleteTodo as props */}
+            {/* Todo table */}
             <TodoTable todos={todos} deleteTodo={deleteTodo} />
         </div>
     );
