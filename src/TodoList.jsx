@@ -1,72 +1,139 @@
 /**
  * @file TodoList.jsx
- * @description Component for displaying and managing the list of todo items.
- * Provides functionality for creating, editing, completing, and deleting todos.
+ * @description Main component for todo list functionality including input form and data display.
+ * Manages state for todos, implements add/delete operations, and renders the todo table.
+ * Uses Material UI components for a consistent design with the rest of the application.
  */
-import React, { useState, useEffect } from 'react';
-// ... other imports
+import React, { useState } from 'react';
+import { Box, Stack, TextField, Button } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers';
+
+import TodoTable from './TodoTable';
 
 /**
  * TodoList Component
  * 
- * Manages the todo list state and operations:
- * - Displays the list of todos
- * - Handles adding new todos
- * - Supports marking todos as complete
- * - Allows deleting todos
- * - Provides filtering capabilities
+ * Provides a complete todo list interface with:
+ * - Input form for adding new todos with description, date, and priority
+ * - Data validation before adding new todos
+ * - Integration with TodoTable for displaying existing todos
+ * - Delete functionality for removing todos
  * 
- * @returns {JSX.Element} The rendered TodoList component
+ * @returns {JSX.Element} Complete todo list interface with form and table
  */
-function TodoList() {
-    // State for storing the list of todos
+const TodoList = () => {
+    /**
+     * State for storing the list of todo items
+     * @type {Array} Array of todo objects with description, date, and priority
+     */
     const [todos, setTodos] = useState([]);
 
-    // State for the new todo input field
-    const [newTodo, setNewTodo] = useState('');
-
-    // ... other state variables
+    /**
+     * State for the current todo being created
+     * @type {Object} Todo object with description, date, and priority fields
+     */
+    const [todo, setTodo] = useState({ description: '', date: null, priority: '' });
 
     /**
-     * Adds a new todo item to the list
+     * Handles input field changes for text inputs (description and priority)
+     * Updates the todo state object using the input field name as the property key
      * 
-     * @param {Event} e - The form submit event
+     * @param {Object} e - The input change event
+     * @param {string} e.target.name - The name of the input field that changed
+     * @param {string} e.target.value - The new value of the input field
      */
-    const handleAddTodo = (e) => {
-        e.preventDefault();
-        // Implementation...
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setTodo((prev) => ({ ...prev, [name]: value }));
     };
 
     /**
-     * Toggles the completion status of a todo
+     * Handles date picker changes
+     * Updates only the date property in the todo state object
      * 
-     * @param {string|number} id - The id of the todo to toggle
+     * @param {Date|null} newDate - The selected date object or null if cleared
      */
-    const handleToggleComplete = (id) => {
-        // Implementation...
+    const handleDateChange = (newDate) => {
+        setTodo((prev) => ({ ...prev, date: newDate }));
     };
 
     /**
-     * Removes a todo from the list
-     * 
-     * @param {string|number} id - The id of the todo to delete
+     * Adds the current todo to the todos list
+     * Validates that all required fields are filled before adding
+     * Adds new todo to the beginning of the list (newest first)
+     * Resets the input form after successful addition
      */
-    const handleDeleteTodo = (id) => {
-        // Implementation...
+    const addTodo = () => {
+        // Validate that all required fields are filled
+        if (!todo.description.trim() || !todo.date || !todo.priority.trim()) {
+            alert('Please fill in description, date, and priority!');
+            return;
+        }
+
+        // Add new todo to the beginning of the list and reset form
+        setTodos([todo, ...todos]);
+        setTodo({ description: '', date: null, priority: '' });
     };
 
-    // ... other handlers and effects
+    /**
+     * Deletes a todo from the list based on its index
+     * Uses array filter to create a new array without the specified todo
+     * 
+     * @param {number} indexToDelete - The index of the todo to remove
+     */
+    const deleteTodo = (indexToDelete) => {
+        setTodos(todos.filter((_, index) => index !== indexToDelete));
+    };
 
     return (
-        // JSX for rendering the todo list interface
-        <div>
-            {/* Todo input form */}
+        <Box
+            sx={{
+                width: '100%',
+                maxWidth: '900px',    // Limit content width
+                mx: 'auto',           // Center horizontally
+                textAlign: 'center',  // Optional: center text
+            }}
+        >
+            {/* Input form for adding new todos */}
+            <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="center"
+                sx={{ mb: 2 }}
+            >
+                <TextField
+                    label="Description"
+                    variant="outlined"
+                    name="description"
+                    value={todo.description}
+                    onChange={handleChange}
+                />
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                        label="Date"
+                        value={todo.date}
+                        onChange={handleDateChange}
+                        renderInput={(params) => <TextField variant="outlined" {...params} />}
+                    />
+                </LocalizationProvider>
+                <TextField
+                    label="Priority"
+                    variant="outlined"
+                    name="priority"
+                    value={todo.priority}
+                    onChange={handleChange}
+                />
+                <Button variant="contained" color="primary" onClick={addTodo}>
+                    ADD
+                </Button>
+            </Stack>
 
-            {/* Todo list display */}
-
-            {/* Filtering options */}
-        </div>
+            {/* Table displaying all todos with delete functionality */}
+            <TodoTable todos={todos} deleteTodo={deleteTodo} />
+        </Box>
     );
-}
+};
 
 export default TodoList;
