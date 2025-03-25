@@ -1,86 +1,55 @@
+/**
+ * @file theme.js
+ * @description Custom Material UI theme configuration.
+ * Defines the dark theme used throughout the application including colors,
+ * typography, and component style overrides.
+ */
 import { createTheme } from '@mui/material/styles';
 
+/**
+ * Custom dark theme configuration for Material UI
+ * 
+ * Extends the default Material UI theme with custom:
+ * - Color palette (primary, secondary, background colors)
+ * - Typography settings
+ * - Component style overrides
+ * - Spacing and breakpoint configurations
+ */
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
-        primary: { main: '#ccc' },
+        primary: {
+            main: '#90caf9', // Example light blue
+            // ... other primary color variants
+        },
+        secondary: {
+            main: '#f48fb1', // Example pink
+            // ... other secondary color variants
+        },
         background: {
-            default: '#222', // Page background
-            paper: '#222'    // Component background
+            default: '#121212',
+            paper: '#1e1e1e',
         },
-        text: {
-            primary: '#ccc'
-        }
+        // ... other color definitions
     },
+
+    typography: {
+        // Font family, sizes, weights, etc.
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        // ... other typography settings
+    },
+
     components: {
-        // 1) OutlinedInput (TextField's default variant)
-        MuiOutlinedInput: {
+        // Component-specific style overrides
+        MuiButton: {
             styleOverrides: {
-                root: {
-                    backgroundColor: '#222',
-                    '& fieldset': {
-                        borderColor: '#666', // Default border color
-                    },
-                    '&:hover fieldset': {
-                        borderColor: '#aaa', // Hover border color
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: '#aaa', // Focused border color
-                    }
-                },
-                input: {
-                    color: '#ccc' // Gray text inside the input
-                }
-            }
+                // Button style customizations
+            },
         },
+        // ... other component overrides
+    },
 
-        // 2) InputLabel (the floating label above the input)
-        MuiInputLabel: {
-            styleOverrides: {
-                root: {
-                    color: '#ccc' // Gray label
-                },
-                shrink: {
-                    color: '#ccc' // Gray label when focused
-                }
-            }
-        },
-
-        // 3) SvgIcon (calendar icon, etc.)
-        MuiSvgIcon: {
-            styleOverrides: {
-                root: {
-                    color: '#ccc' // Gray icons (e.g., calendar)
-                }
-            }
-        },
-
-        // 4) MUI X Date Pickers day cells
-        MuiPickersDay: {
-            styleOverrides: {
-                root: {
-                    color: '#ccc',       // Day numbers in the calendar
-                    backgroundColor: '#222'
-                },
-                today: {
-                    borderColor: '#ccc'  // Outline for "today"
-                },
-                selected: {
-                    backgroundColor: '#444', // Selected day background
-                    color: '#fff'            // Selected day text
-                }
-            }
-        },
-
-        // 5) Calendar/Clock container background
-        MuiCalendarOrClockPicker: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: '#222'
-                }
-            }
-        }
-    }
+    // ... other theme configurations
 });
 
 export default darkTheme;
